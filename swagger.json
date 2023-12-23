@@ -1,0 +1,1084 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Money Expense Rest API",
+    "description": "API documentatio for the project Money Expenses",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+  }
+  },
+  "host": "localhost:3000",
+  "tags": [
+    {
+        "name": "User",
+        "description": "API per il modello 'User'. Gestisce gli utenti in piattaforma"
+    },
+    {
+        "name" : "Authentication",
+        "description": "API per gestire login e logout, signup e gestione delle sessioni mediante token"
+    },
+    {
+        "name" : "Category",
+        "description": "API per il modello 'Category'. Gestische le categorie in piattaforma"
+    },
+    {
+        "name" : "Budget",
+        "description": "API per il modello 'Budget'. Gestisce i budget in piattaforma"
+    },
+    {
+        "name" : "Transaction",
+        "description": "API per il modello 'Transaction'. Gestisce le transazioni in piattaforma"
+    },
+    {
+        "name" : "Wallet",
+        "description" : "API per il modello 'Wallet'. Gestisce i wallet in piattaforma"
+    }
+],
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags" : [
+          "Authentication"
+        ],
+        "summary": "Login the user",
+        "parameters": [
+          {
+            "name": "Login user",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string", 
+                  "example": "mario.rossi@gmail.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "password"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Incorrect credentials"
+          },
+          "404": {
+            "description": "User Not Found"
+          }
+        }
+      }
+    },
+    "/auth/isLogged": {
+      "post": {
+        "tags" : [
+          "Authentication"
+        ],
+        "summary": "Check if user is authenticated",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unvalid token"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags" : [
+          "Authentication"
+        ],
+        "summary": "Logout the user from the session",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags" : [
+          "Authentication"
+        ],
+        "summary": "Creates a new user in the application",
+        "parameters": [
+          {
+            "name": "Dati utente",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type":"string",
+                  "example": "mario.rossi@gmail.com"
+                },
+                "password": {
+                  "type":"string",
+                  "example": "password"
+                },
+                "firstName": {
+                  "type":"string",
+                  "example": "Mario"
+                },
+                "lastName": {
+                  "type":"string",
+                  "example": "Rossi"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "User already exists"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/": {
+      "get": {
+        "tags" : [
+          "User"
+        ],
+        "summary": "Get all users",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/{email}": {
+      "get": {
+        "tags" : [
+          "User"
+        ],
+        "summary": "Get user by email",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags" : [
+          "User"
+        ],
+        "summary": "Modifies one user",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "User not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags" : [
+          "User"
+        ],
+        "summary": "Deletes a user",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "User not Found"
+          }
+        }
+      }
+    },
+    "/api/user/password/{email}": {
+      "put": {
+        "tags" : [
+          "User"
+        ],
+        "summary": "Modifies a user password",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "password": {
+                  "type":"string",
+                  "example": "password"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "User not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/category/": {
+      "post": {
+        "tags" : [
+          "Category"
+        ],
+        "summary": "Creates a category",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Kitchen expenses"
+                },
+                "user": {
+                  "type": "string",
+                  "example": "mario.rossi@gmail.com"
+                },
+                "tags": {
+                  "type": "string[]",
+                  "example": ["grocery", "home"]
+                },
+                "color": {
+                  "type": "string",
+                  "example": "#fff"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Category created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Category name already in use"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "tags" : [
+          "Category"
+        ],
+        "summary": "Get all categories",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/category/user/{name}": {
+      "get": {
+        "tags" : [
+          "Category"
+        ],
+        "summary": "Get all categories that are owned by a given user",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/category/{user}/{name}": {
+      "get": {
+        "tags" : [
+          "Category"
+        ],
+        "summary": "Get the category that belongs to a user with a given name",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags" : [
+          "Category"
+        ],
+        "summary": "Delete a specific cateogory",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/category/{name}": {
+      "put": {
+        "tags" : [
+          "Category"
+        ],
+        "summary": "Modifies a given category",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Kitchen expenses"
+                },
+                "user": {
+                  "type": "string",
+                  "example": "mario.rossi@gmail.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "409": {
+            "description": "Category name already in use"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/budget/": {
+      "post": {
+        "tags" : [
+          "Budget"
+        ],
+        "summary": "Creates a budget",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Grocery"
+                },
+                "user": {
+                  "type": "string",
+                  "example": "mario.rossi@gmail.com"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Monthly for grocery expenses"
+                },
+                "initialMoney": {
+                  "type": "number",
+                  "example": "100"
+                },
+                "category": {
+                  "type": "string",
+                  "example": "Home Expenses"
+                },
+                "color": {
+                  "type": "string",
+                  "example": "#fff"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Budget created"
+          },
+          "409": {
+            "description": "Budget name already in use"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "tags" : [
+          "Budget"
+        ],
+        "summary": "Get all budgets",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/budget/user/{name}": {
+      "get": {
+        "tags" : [
+          "Budget"
+        ],
+        "summary": "Get all budgets of a user",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/budget/{user}/{name}": {
+      "get": {
+        "tags" : [
+          "Budget"
+        ],
+        "summary": "Get a budget with a name that belongs to a user",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Budget not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags" : [
+          "Budget"
+        ],
+        "summary": "Deletes a budget",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Budget not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/budget/{name}": {
+      "put": {
+        "tags" : [
+          "Budget"
+        ],
+        "summary": "Modifies a given budget",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Grocery"
+                },
+                "user": {
+                  "type": "string",
+                  "example": "mario.rossi@gmail.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Budget not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/wallet/": {
+      "post": {
+        "tags" : [
+          "Wallet"
+        ],
+        "summary": "Creates a wallet",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Paypal Account"
+                },
+                "user": {
+                  "type": "string",
+                  "example": "mario.rossi@gmail.com"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Money in Paypal"
+                },
+                "money": {
+                  "type": "number",
+                  "example": "112.23"
+                },
+                "color": {
+                  "type": "string",
+                  "example": "#00f"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Wallet name already in use"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "tags" : [
+          "Wallet"
+        ],
+        "summary": "Get all wallets",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/wallet/user/{name}": {
+      "get": {
+        "tags" : [
+          "Wallet"
+        ],
+        "summary": "Get all wallets of a user",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/wallet/{user}/{name}": {
+      "get": {
+        "tags" : [
+          "Wallet"
+        ],
+        "summary": "Get a wallet with a name that belongs to a user",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Walllet not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags" : [
+          "Wallet"
+        ],
+        "summary": "Deletes a wallet",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Wallet not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/wallet/{name}": {
+      "put": {
+        "tags" : [
+          "Wallet"
+        ],
+        "summary": "Modifies a given wallet",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Paypal Account"
+                },
+                "user": {
+                  "type":"string",
+                  "example": "mario.rossi@gmail.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Wallet not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/transaction/": {
+      "post": {
+        "tags" : [
+          "Transaction"
+        ],
+        "summary": "Creates a transaction",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type":"string",
+                  "example": "mario.rossi@gmail.com"
+                },
+                "category": {
+                  "type":"string",
+                  "example": "Grocery"
+                },
+                "wallet": {
+                  "type":"string",
+                  "example": "Paypal Account"
+                },
+                "type": {
+                  "type":"string",
+                  "example": "expenses"
+                },
+                "money": {
+                  "type":"number",
+                  "example": "12.00"
+                },
+                "description": {
+                  "type":"string",
+                  "example": "Bougth the vegetables for the week"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "No token provided"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Alredy exists"
+          },
+          "404": {
+            "description": "Wallet not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "tags" : [
+          "Transaction"
+        ],
+        "summary": "Get all transactions",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags" : [
+          "Transaction"
+        ],
+        "summary": "Modifies a given transaction",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "uuid"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Transaction not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/transaction/user/{name}": {
+      "get": {
+        "tags" : [
+          "Transaction"
+        ],
+        "summary": "Get all transactions that are owned by a given user",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/transaction/{id}": {
+      "get": {
+        "tags" : [
+          "Transaction"
+        ],
+        "summary": "Gets a given transaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags" : [
+          "Transaction"
+        ],
+        "summary": "Deletes a transaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Transaction not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  }
+}
