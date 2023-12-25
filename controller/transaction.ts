@@ -2,12 +2,15 @@ import express from "express";
 import Transaction, {TransactionType} from "../models/transaction";
 import Wallet from "../models/wallet";
 import Budget from "../models/budget";
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 // Create new transaction
 export const createTransaction = async (req: express.Request, res: express.Response) => {
     try {
+        const customObjectId = new ObjectId();
         const newTransaction = new Transaction({
-            _id: new Date().toISOString() + " - " + req.body.user,
+            _id: customObjectId,
             category: req.body.category,
             wallet: req.body.wallet,
             type: req.body.type,
@@ -72,7 +75,7 @@ export const getTransactionById = async (req: express.Request, res: express.Resp
             res.status(404).send('Transaction not found');
         }
     } catch (err) {
-        res.status(500).send('Internal Server Error');
+        res.status(404).send('Transaction not found');
     }
 }
 
@@ -90,6 +93,7 @@ export const getTransactionsByUser = async (req: express.Request, res: express.R
 // Delete transaction by id
 export const deleteTransactionById = async (req: express.Request, res: express.Response) => {
     try {
+        console.log("ID", req.params.id);
         const data = await Transaction.findByIdAndDelete(req.params.id);
         if (data) {
             res.status(204).send('Transaction deleted');
@@ -97,7 +101,7 @@ export const deleteTransactionById = async (req: express.Request, res: express.R
             res.status(404).send('Transaction not found');
         }
     } catch (err) {
-        res.status(500).send('Internal Server Error');
+        res.status(404).send('Transaction not found');
     }
 }
 

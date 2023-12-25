@@ -1,14 +1,17 @@
 import express from "express";
 import Wallet, {WalletType} from "../models/wallet";
 import Transaction from "../models/transaction";
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 // Create new wallet
 export const createWallet = (req: express.Request, res: express.Response) => {
     Wallet.findOne({name: req.body.name, user: req.body.user})
     .then((data: WalletType | null) => {
         if (!data){
+            const customObjectId = new ObjectId();
             let newWallet = new Wallet({
-                _id: req.body.name + req.body.user + Date.now(),
+                _id: customObjectId,
                 name: req.body.name,
                 description: req.body.description,
                 money: req.body.money,

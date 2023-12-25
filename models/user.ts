@@ -1,7 +1,9 @@
 import { Schema, model } from 'mongoose';
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 const schema = new Schema({
-    _id : {type:String},
+    _id : {type:ObjectId, required:true},
     firstName: {type:String, required:true},
     lastName: {type:String, required:true},
     email: {type:String, required:true},

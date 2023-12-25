@@ -1,8 +1,10 @@
 import e from 'express';
 import { Schema, model } from 'mongoose';
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 const schema = new Schema({
-    _id : {type:String},
+    _id : {type:ObjectId, required:true},
     name: {type:String, required:true},
     tags: {type: [String]},
     user: {type:String, required:true},

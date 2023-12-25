@@ -1,13 +1,16 @@
 import express from "express";
 import Budget, {BudgetType} from "../models/budget";
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 // Create new budget
 export const createBudget = (req: express.Request, res: express.Response) => {
     Budget.findOne({name: req.body.name, user: req.body.user})
     .then((data: BudgetType | null) => {
+        const customObjectId = new ObjectId();
         if (!data) {
             const newBudget = new Budget({
-                _id: req.body.name + req.body.user + Date.now(),
+                _id: customObjectId,
                 name: req.body.name,
                 description: req.body.description,
                 initialMoney: req.body.initialMoney,

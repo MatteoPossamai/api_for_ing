@@ -1,7 +1,9 @@
 import { Schema, model } from 'mongoose';
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 const schema = new Schema({
-    _id : {type:String},
+    _id : {type:ObjectId, required:true},
     category: {type:String, required:true},
     wallet: {type:String, required:true},
     type: {type: String, enum: ["income", "expense"], required:true},

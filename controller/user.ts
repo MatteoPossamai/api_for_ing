@@ -1,6 +1,8 @@
 import express from "express";
 import User, {UserType} from "../models/user";
 import { passwordChecker } from "../utils/passwordChecker";
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 // Create new user in signup
 export const signUp = (req: express.Request, res: express.Response) => {
@@ -11,8 +13,9 @@ export const signUp = (req: express.Request, res: express.Response) => {
             if (!passwordChecker(req.body.password)){
                 return res.status(400).send('Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number and one special character');
             }
+            const customObjectId = new ObjectId();
             const newUser = new User({
-                _id: req.body.email + Date.now(),
+                _id: customObjectId,
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 email: req.body.email,
