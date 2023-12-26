@@ -24,7 +24,6 @@ export const createCategory = (req: express.Request, res: express.Response) => {
                 res.status(201).send(data);
             })
             .catch((err: Error) => {
-                console.log(err.message);
                 if (err.message.includes('duplicate key error')) {
                     res.status(409).send('Category name already in use');
                 }else {
@@ -88,17 +87,24 @@ export const getCategory = (req: express.Request, res: express.Response) => {
 
 // Update category
 export const updateCategory = (req: express.Request, res: express.Response) => {
-    Category.findOneAndUpdate({name: req.params.name, user: req.body.user}, req.body, {new: true})
-    .then((data: CategoryType | null) => {
-        if (data) {
-            res.status(200).send('Category updated');
-        } else {
-            res.status(404).send('Category not found');
-        }
+    Transaction.updateMany({category: req.params.name, user: req.body.user}, {category: req.body.name})
+    .then( ()=> {
+        Category.findOneAndUpdate({name: req.params.name, user: req.body.user}, req.body, {new: true})
+        .then((data: CategoryType | null) => {
+            if (data) {
+                res.status(200).send('Category updated');
+            } else {
+                res.status(404).send('Category not found');
+            }
+        })
+        .catch((_: Error) => {
+            res.status(500).send('Internal Server Error');
+        });
     })
     .catch((_: Error) => {
         res.status(500).send('Internal Server Error');
     });
+    
 }
 
 // Delete category

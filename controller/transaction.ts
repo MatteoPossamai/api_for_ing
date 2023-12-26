@@ -93,7 +93,25 @@ export const getTransactionsByUser = async (req: express.Request, res: express.R
 // Delete transaction by id
 export const deleteTransactionById = async (req: express.Request, res: express.Response) => {
     try {
-        console.log("ID", req.params.id);
+        let transaction = await Transaction.findById(req.params.id);
+        let wallet = await Wallet.findOne({name: transaction?.wallet, user: transaction?.user});
+        if (wallet && transaction) {
+            if (transaction.type === 'income') {
+                wallet.money -= transaction.money;
+            }else {
+                wallet.money += transaction.money;
+            }
+            await wallet.save();
+        }
+        let budget = await Budget.findOne({category: transaction?.category, user: transaction?.user});
+        if (budget && transaction) {
+            if (transaction.type === 'income') {
+                budget.actualMoney -= transaction.money;
+            }else {
+                budget.actualMoney += transaction.money;
+            }
+            await budget.save();
+        }
         const data = await Transaction.findByIdAndDelete(req.params.id);
         if (data) {
             res.status(204).send('Transaction deleted');
@@ -107,9 +125,44 @@ export const deleteTransactionById = async (req: express.Request, res: express.R
 
 // Update transaction by id
 export const updateTransactionById = async (req: express.Request, res: express.Response) => {
+    let transaction = await Transaction.findById(req.body._id);
+    let wallet = await Wallet.findOne({name: transaction?.wallet, user: transaction?.user});
+    if (wallet && transaction) {
+        if (transaction.type === 'income') {
+            wallet.money -= transaction.money;
+        }else {
+            wallet.money += transaction.money;
+        }
+        await wallet.save();
+    }
+    let category = await Budget.findOne({category: transaction?.category, user: transaction?.user});
+    if (category && transaction) {
+        if (transaction.type === 'income') {
+            category.actualMoney -= transaction.money;
+        }else {
+            category.actualMoney += transaction.money;
+        }
+        await category.save();
+    }
     Transaction.findByIdAndUpdate(req.body._id, req.body, {new: true})
     .then((data: TransactionType | null) => {
-        if (data) {
+        if (data && wallet) {
+            if (data.type === 'income') {
+                wallet.money += data.money;
+            }
+            else {
+                wallet.money -= data.money;
+            }
+            wallet.save();
+            if (data && category) {
+                if (data.type === 'income') {
+                    category.actualMoney += data.money;
+                }
+                else {
+                    category.actualMoney -= data.money;
+                }
+                category.save();
+            }
             res.status(200).send('Transaction updated');
         } else {
             res.status(404).send('Transaction not found');
